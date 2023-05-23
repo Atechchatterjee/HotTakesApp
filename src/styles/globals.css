@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: theme('colors.bg_primary');
+  color: white;
+  margin: 0 10em;
+}
