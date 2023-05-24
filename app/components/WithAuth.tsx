@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 import { Account } from "appwrite";
 
 // Wrapper Component to implement protected routes
-const WithAuth =
-  (WrappedComponent: () => React.JSX.Element, redirectURI?: string) => () => {
+const WithAuth = (
+  WrappedComponent: () => React.JSX.Element,
+  redirectURI?: string
+) => {
+  function Auth() {
     const [authenticated, setAuthenticated] = useState<boolean>(false);
     const router = useRouter();
 
@@ -21,10 +24,12 @@ const WithAuth =
             console.error(err);
             setAuthenticated(false);
           });
-      })();
+      })().catch((err) => console.error(err));
     }, [authenticated]);
 
     return authenticated && <WrappedComponent />;
-  };
+  }
+  return Auth;
+};
 
 export default WithAuth;
