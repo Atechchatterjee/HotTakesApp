@@ -17,9 +17,11 @@ const Button = ({
   return (
     <button
       className={clsx(
-        "rounded-sm",
-        variant == "primary" ? "bg-primary" : "bg-secondary",
-        "p-14 pb-4 pt-4 text-center"
+        "rounded-md transition-all duration-300",
+        variant == "primary"
+          ? "bg-primary hover:brightness-125"
+          : "bg-btn_secondary hover:brightness-125",
+        "p-10 pb-[1em] pt-[1em] text-center"
       )}
       {...props}
     >

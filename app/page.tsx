@@ -1,36 +1,53 @@
 import { type NextPage } from "next";
 
 import Head from "next/head";
-import Navbar from "~/components/Navbar";
-import FeatureCard from "~/components/FeatureCard";
-import Button from "~/components/util/Button";
-
-import { api } from "~/utils/api";
+import Navbar from "app/components/Navbar";
+import Button from "app/components/Button";
 
 import { Sora } from "next/font/google";
 
 const sora = Sora({ subsets: ["latin"], weight: ["400", "800"] });
 
-const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+const FeatureCard = ({
+  title,
+  desc,
+  iconSrc,
+}: {
+  title: string;
+  desc: string;
+  iconSrc: string;
+}) => (
+  <div className="flex flex-col gap-10 rounded-lg bg-secondary p-12">
+    <div className="flex flex-row gap-5">
+      <img src={iconSrc} />
+      <h1 className={`${sora.className} text-4xl font-semibold text-accent`}>
+        {title}
+      </h1>
+    </div>
+    <p className="text-xl leading-10">{desc}</p>
+  </div>
+);
 
+const Home: NextPage = () => {
   return (
     <>
       <Head>
         <title>Hot Takes App</title>
       </Head>
       <Navbar />
-      <div className="absolute z-[-1] mt-[5rem] h-96 w-96 rounded-full bg-primary blur-[10em]"></div>
+
+      <div className="absolute z-[-1] mt-[5rem] h-96 w-96 rounded-full bg-primary blur-[10em]" />
+
       <div className="landing-page flex w-[95%] flex-row gap-10 pt-40">
         <div className="flex flex-col flex-wrap gap-10 pr-40">
           <h1
             className={`${sora.className}  bg-gradient-to-r from-white  to-primary bg-clip-text
-          text-7xl font-semibold leading-[1.15] text-transparent
+          text-6xl font-semibold leading-[1.15] text-transparent
           `}
           >
             Give Your Hot Takes on trendiest Tech Topics
           </h1>
-          <p>
+          <p className="leading-relaxed">
             Hot Takes App is centred around the concept of building communities
             to host discussions on the trendiest tech topics in this world. Be a
             part of these communities and have your own fair share of hot takes.
@@ -48,7 +65,7 @@ const Home: NextPage = () => {
         <img
           src="landing-illus.svg"
           alt="landing-illus"
-          className="scale-[115%]"
+          className="scale-[120%]"
         />
       </div>
       <div className="mb-20 mt-36 flex flex-row gap-10">
