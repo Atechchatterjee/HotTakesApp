@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { appwriteAccount } from "utils/appwriteConfig";
+import { appwriteAccount, appwriteClient } from "utils/appwriteConfig";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Account } from "appwrite";
 
 // Wrapper Component to implement protected routes
 const WithAuth = (

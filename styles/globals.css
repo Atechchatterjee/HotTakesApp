@@ -5,28 +5,5 @@
 body {
   background-color: theme('colors.bg_primary');
   color: white;
-  width: 100em;
-  margin: auto;
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--secondary) var(--primary);
-}
-
-/* Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  width: 15px;
-}
-
-*::-webkit-scrollbar-track {
-  background: theme('colors.secondary');
-  border-radius: 5px;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: theme('colors.accent');
-  border-radius: 14px;
-  border: 3px solid theme('colors.secondary');
+  margin: 0 10em;
 }
