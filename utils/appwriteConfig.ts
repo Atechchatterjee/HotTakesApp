@@ -2,7 +2,7 @@ import { Account, Client, Databases } from "appwrite";
 import { env } from "env.mjs";
 
 export const appwriteClient = new Client()
-  .setEndpoint("https://cloud.appwrite.io/v1")
+  .setEndpoint("http://localhost/v1")
   .setProject(env.NEXT_PUBLIC_APPWRITE_PROJECT_ID ?? "");
 
 export const appwriteDatabase = new Databases(appwriteClient);

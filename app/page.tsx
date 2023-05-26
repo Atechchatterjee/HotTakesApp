@@ -35,19 +35,17 @@ const Home: NextPage = () => {
         <title>Hot Takes App</title>
       </Head>
       <Navbar />
-
-      <div className="absolute z-[-1] mt-[5rem] h-96 w-96 rounded-full bg-primary blur-[10em]" />
-
+      <div className="absolute z-[-1] mt-[5rem] h-96 w-96 rounded-full bg-primary blur-[14em]" />
       <div className="landing-page flex w-[95%] flex-row gap-10 pt-40">
         <div className="flex flex-col flex-wrap gap-10 pr-40">
           <h1
-            className={`${sora.className}  bg-gradient-to-r from-white  to-primary bg-clip-text
-          text-6xl font-semibold leading-[1.15] text-transparent
+            className={`${sora.className} bg-clip-text text-6xl
+          font-semibold leading-[1.15] text-transparent text-white
           `}
           >
             Give Your Hot Takes on trendiest Tech Topics
           </h1>
-          <p className="leading-relaxed">
+          <p className="text-[1.1rem] leading-relaxed">
             Hot Takes App is centred around the concept of building communities
             to host discussions on the trendiest tech topics in this world. Be a
             part of these communities and have your own fair share of hot takes.
