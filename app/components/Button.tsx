@@ -9,11 +9,11 @@ interface Props
   variant?: "primary" | "secondary";
 }
 
-const Button = ({
+export default function Button({
   variant = "secondary",
   children,
   ...props
-}: PropsWithChildren<Props>) => {
+}: PropsWithChildren<Props>) {
   return (
     <button
       className={clsx(
@@ -28,6 +28,4 @@ const Button = ({
       {children}
     </button>
   );
-};
-
-export default Button;
+}

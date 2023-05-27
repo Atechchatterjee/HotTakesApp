@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 // Wrapper Component to implement protected routes
-const WithAuth = (
+export default function WithAuth(
   WrappedComponent: () => React.JSX.Element,
   redirectURI?: string
-) => {
+) {
   function Auth() {
     const [authenticated, setAuthenticated] = useState<boolean>(false);
     const router = useRouter();
@@ -29,6 +29,4 @@ const WithAuth = (
     return authenticated && <WrappedComponent />;
   }
   return Auth;
-};
-
-export default WithAuth;
+}

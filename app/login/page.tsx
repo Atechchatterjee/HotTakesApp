@@ -1,12 +1,11 @@
 "use client";
-import { NextPage } from "next";
 import React from "react";
 import Navbar from "app/components/Navbar";
-import Button from "app/components/Button";
+import { Button } from "app/components/ui/button";
 import { appwriteAccount } from "utils/appwriteConfig";
 import { sora } from "app/fonts";
 
-const Login: NextPage = () => {
+export default function Login() {
   const handleGithubSign = () => {
     try {
       appwriteAccount.createOAuth2Session(
@@ -35,26 +34,24 @@ const Login: NextPage = () => {
     <>
       <Navbar />
       <div className="mt-[7rem] flex gap-5">
-        <div className="flex flex-col gap-5 pr-[10%]">
+        <div className="flex flex-col gap-5 pr-[15%]">
           <h1
-            className={`${sora.className}  bg-gradient-to-r from-white  to-primary bg-clip-text
-          text-5xl font-semibold leading-[1.15] text-transparent
+            className={`${sora.className} bg-gradient-to-r from-accent  to-white bg-clip-text
+          text-5xl font-bold leading-[1.25] text-transparent
           `}
           >
             Want to be a part of these communities?
           </h1>
-          <div className="absolute z-[-1] mt-[-7rem] h-96 w-96 rounded-full bg-primary blur-[15em]" />
+          <div className="absolute z-[-1] mt-[-10rem] h-96 w-96 rounded-full bg-primary blur-[20em]" />
           <p className="text-[1.1rem]">
             Or become an{" "}
             <span className={`${sora.className} font-semibold text-accent`}>
               Author
             </span>{" "}
           </p>
-          <div className="mt-[2em] flex flex-col gap-12 rounded-lg bg-secondary p-10">
+          <div className="mt-[2em] flex flex-col gap-12 rounded-lg bg-gradient-to-b from-[#1A163D] to-[#181339] p-10">
             <h2
-              className={`${sora.className}  bg-gradient-to-r from-white  to-primary bg-clip-text
-          text-3xl font-semibold leading-[1.15] text-transparent
-          `}
+              className={`${sora.className} bg-gradient-to-r from-white  to-primary bg-clip-text text-3xl font-semibold leading-[1.15] text-transparent`}
             >
               Normie
             </h2>
@@ -70,7 +67,7 @@ const Login: NextPage = () => {
               </span>
             </p>
             <div className="flex flex-col gap-3">
-              <Button variant="secondary" onClick={handleGithubSign}>
+              <Button variant="secondary" onClick={handleGithubSign} size="xl">
                 <div className="flex w-full justify-center gap-5">
                   <img src="github-icon.svg" alt="github-icon" />
                   <span>Github SignIn</span>
@@ -81,7 +78,7 @@ const Login: NextPage = () => {
               >
                 OR
               </p>
-              <Button variant="primary" onClick={handleGoogleSign}>
+              <Button variant="primary" onClick={handleGoogleSign} size="xl">
                 <div className="flex justify-center gap-5">
                   <img src="google-icon.svg" alt="google-icon" />
                   <span>Google SignIn</span>
@@ -98,6 +95,4 @@ const Login: NextPage = () => {
       </div>
     </>
   );
-};
-
-export default Login;
+}

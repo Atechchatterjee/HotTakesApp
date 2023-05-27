@@ -1,5 +1,5 @@
 import "styles/globals.css";
-import { sora, nunito } from "app/fonts";
+import { nunito } from "app/fonts";
 
 export const metadata = {
   title: "Next.js",
@@ -13,6 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <title>Hot Takes</title>
+      </head>
       <body className={`${nunito.className}`}>{children}</body>
     </html>
   );

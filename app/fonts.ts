@@ -1,4 +1,10 @@
-import { Sora, Nunito } from "next/font/google";
+import { Sora, Nunito, Inter } from "next/font/google";
+
+export const inter = Inter({
+  subsets: ["latin"],
+  weight: "variable",
+  variable: "--font-inter",
+});
 
 export const sora = Sora({
   subsets: ["latin"],

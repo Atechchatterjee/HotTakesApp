@@ -2,9 +2,8 @@
 import clsx from "clsx";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { nunito } from "app/fonts";
 
-const Navbar = () => {
+export default function Navbar() {
   const [currentURL, setCurrentURL] = useState<string>("");
 
   useEffect(() => {
@@ -22,11 +21,12 @@ const Navbar = () => {
   ];
 
   return (
-    <div className={`${nunito.className} flex flex-wrap pb-5 pt-5`}>
+    <div className="flex flex-wrap pb-5 pt-5">
       <img src="logo.svg" alt="hot-takes-logo flex-1" />
-      <div className="flex flex-1 flex-wrap justify-end gap-10 font-semibold text-inactive">
-        {NavLinks.map(({ name, href }) => (
+      <div className="text-inactive flex flex-1 flex-wrap justify-end gap-10 font-semibold">
+        {NavLinks.map(({ name, href }, i) => (
           <Link
+            key={i}
             href={href}
             className={clsx(
               checkURL(href) && "font-bold text-accent",
@@ -39,6 +39,4 @@ const Navbar = () => {
       </div>
     </div>
   );
-};
-
-export default Navbar;
+}
