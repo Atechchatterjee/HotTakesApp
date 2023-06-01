@@ -1,5 +1,5 @@
 import "styles/globals.css";
-import { nunito } from "app/fonts";
+import { inter } from "app/fonts";
 
 export const metadata = {
   title: "Next.js",
@@ -16,7 +16,7 @@ export default function RootLayout({
       <head>
         <title>Hot Takes</title>
       </head>
-      <body className={`${nunito.className}`}>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

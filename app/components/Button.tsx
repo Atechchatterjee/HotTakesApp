@@ -12,6 +12,7 @@ interface Props
 export default function Button({
   variant = "secondary",
   children,
+  className,
   ...props
 }: PropsWithChildren<Props>) {
   return (
@@ -21,7 +22,8 @@ export default function Button({
         variant == "primary"
           ? "bg-primary hover:brightness-125"
           : "bg-btn_secondary hover:brightness-125",
-        "p-10 pb-[1em] pt-[1em] text-center"
+        "p-10 pb-[1em] pt-[1em] text-center",
+        className
       )}
       {...props}
     >

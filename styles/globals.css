@@ -85,8 +85,6 @@
 body {
   background-color: var(--background);
   color: white;
-  width: 100em;
-  margin: auto;
 }
 
 /* Firefox */

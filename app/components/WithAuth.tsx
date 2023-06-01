@@ -1,7 +1,9 @@
-import { useEffect } from "react";
-import { appwriteAccount } from "utils/appwriteConfig";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { appwriteAccount, appwriteAvatars } from "utils/appwriteConfig";
 import { useRouter } from "next/navigation";
+import { Models } from "appwrite";
+import { useStore } from "store";
+import checkRoles from "utils/checkRole";
 
 // Wrapper Component to implement protected routes
 export default function WithAuth(
@@ -9,24 +11,37 @@ export default function WithAuth(
   redirectURI?: string
 ) {
   function Auth() {
-    const [authenticated, setAuthenticated] = useState<boolean>(false);
+    const [user, setUser] = useState<Models.User<Models.Preferences>>();
     const router = useRouter();
+    const setUserFromStore = useStore((state) => state.setUser);
 
     useEffect(() => {
       (async () => {
         // checks if the user session exists in the appwrite sessions table
-        await appwriteAccount
-          .get()
-          .then(() => setAuthenticated(true))
-          .catch((err) => {
-            router.push(redirectURI || "/login");
-            console.error(err);
-            setAuthenticated(false);
-          });
-      })().catch((err) => console.error(err));
-    }, [authenticated]);
+        try {
+          const user = await appwriteAccount.get();
+          setUser(user);
 
-    return authenticated && <WrappedComponent />;
+          const { href: avatarImgSrc } = appwriteAvatars.getInitials();
+
+          const isAuthor = await checkRoles("Authors");
+
+          // adding/updating the user data in the global state
+          setUserFromStore({
+            userId: user.$id,
+            avatarImgSrc,
+            name: user.name,
+            isAuthor,
+          });
+        } catch (err) {
+          router.push(redirectURI || "/login");
+          console.error(err);
+          setUser(undefined);
+        }
+      })();
+    }, []);
+
+    return user && <WrappedComponent />;
   }
   return Auth;
 }

@@ -8,6 +8,9 @@ await import("./env.mjs");
 const config = {
   reactStrictMode: true,
   experimental: {appDir: true},
+  images: {
+    domains: ['localhost']
+  },
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config

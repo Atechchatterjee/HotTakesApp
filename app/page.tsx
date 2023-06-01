@@ -1,8 +1,14 @@
+"use client";
 import Head from "next/head";
 import Navbar from "app/components/Navbar";
 import { Button } from "app/components/ui/button";
+import BodyWrapper from "./components/BodyWrapper";
+import { appwriteAvatars } from "utils/appwriteConfig";
+import Image from "next/image";
 
-import { inter, sora } from "app/fonts";
+import { sora } from "app/fonts";
+import { useEffect } from "react";
+import GradientContainer from "./components/GradientContainer";
 
 function FeatureCard({
   title,
@@ -14,27 +20,34 @@ function FeatureCard({
   illusSource: string;
 }) {
   return (
-    <div className="relative bg-secondary p-12">
-      <img
+    <GradientContainer className="relative rounded-lg bg-secondary p-12">
+      <Image
+        width="200"
+        height="200"
         src={illusSource}
         alt="illus-source"
-        className="absolute right-[44%] mt-[-10em] scale-[100%]"
+        className="absolute right-[40%] mt-[-10em] scale-[100%]"
       />
-      <div className="flex flex-col gap-10 rounded-lg ">
-        <div className="flex flex-row gap-5 pt-10">
-          <h1 className={`${sora.className} justify-center text-3xl font-bold`}>
-            {title}
-          </h1>
-        </div>
-        <p className="text-md leading-7">{desc}</p>
+      <div className="flex flex-col gap-10 rounded-lg pt-[5em]">
+        <h1
+          className={`${sora.className} justify-center self-center text-3xl font-bold`}
+        >
+          {title}
+        </h1>
+        <p className="text-lg leading-8">{desc}</p>
       </div>
-    </div>
+    </GradientContainer>
   );
 }
 
 export default function Home() {
+  useEffect(() => {
+    const result = appwriteAvatars.getInitials();
+    console.table(result);
+  }, []);
+
   return (
-    <>
+    <BodyWrapper>
       <Head>
         <title>Hot Takes App</title>
       </Head>
@@ -43,16 +56,13 @@ export default function Home() {
       <div className="landing-page flex w-[95%] flex-row gap-10 pt-40">
         <div className="flex flex-col flex-wrap gap-10 pr-40">
           <h1
-            className={`${sora.className} bg-gradient-to-r
-          from-accent to-white bg-clip-text text-[3.8rem]
-font-bold leading-[1.2]  text-transparent 
-          `}
+            className={`${sora.className} bg-gradient-to-r from-accent to-white bg-clip-text text-[3.2rem] font-bold leading-[1.2]  text-transparent`}
           >
             Give Your Hot Takes
             <br />
             on trendiest Tech Topics
           </h1>
-          <p className="text-[1.1rem] leading-relaxed">
+          <p className="text-[1.15rem] leading-relaxed text-gray-300">
             Hot Takes App is centred around the concept of building communities
             to host discussions on the trendiest tech topics in this world. Be a
             part of these communities and have your own fair share of hot takes.
@@ -79,7 +89,7 @@ font-bold leading-[1.2]  text-transparent
           className="scale-[120%]"
         />
       </div>
-      <div className="mb-20 mt-36 flex flex-row gap-10">
+      <div className="mb-20 mt-[22rem] flex flex-row gap-10">
         <FeatureCard
           title="Idea behind the App"
           desc="In the current world of ever changing tech, we have quite a lot of interesting topics that we as developers are constantly discussing about. This app for developers to get their opinions and hot-takes about specific topic out and open in the world. It would allow the community to have discussion / debate on various topics and hopefully have fun and learn something more about the tech."
@@ -95,6 +105,6 @@ font-bold leading-[1.2]  text-transparent
           illusSource="feature-illus.svg"
         />
       </div>
-    </>
+    </BodyWrapper>
   );
 }

@@ -4,15 +4,16 @@ import Navbar from "app/components/Navbar";
 import { Button } from "app/components/ui/button";
 import { appwriteAccount } from "utils/appwriteConfig";
 import { sora } from "app/fonts";
+import BodyWrapper from "app/components/BodyWrapper";
+import GradientContainer from "app/components/GradientContainer";
 
 export default function Login() {
+  const SUCCESS_URL = "http://localhost:3000/dashboard";
+  const FAILURE_URL = "http://localhost:3000/login";
+
   const handleGithubSign = () => {
     try {
-      appwriteAccount.createOAuth2Session(
-        "github",
-        "http://localhost:3000/dashboard", // success URL
-        "http://localhost:3000/login" // failure URL
-      );
+      appwriteAccount.createOAuth2Session("github", SUCCESS_URL, FAILURE_URL);
     } catch (err) {
       console.error("Appwrite Github OAuth Failed!");
     }
@@ -20,21 +21,17 @@ export default function Login() {
 
   const handleGoogleSign = () => {
     try {
-      appwriteAccount.createOAuth2Session(
-        "google",
-        "http://localhost:3000/dashboard", // success URL
-        "http://localhost:3000/login" // failure URL
-      );
+      appwriteAccount.createOAuth2Session("google", SUCCESS_URL, FAILURE_URL);
     } catch (err) {
       console.error("Appwrite Google OAuth Failed!");
     }
   };
 
   return (
-    <>
+    <BodyWrapper>
       <Navbar />
       <div className="mt-[7rem] flex gap-5">
-        <div className="flex flex-col gap-5 pr-[15%]">
+        <div className="flex flex-col gap-5 pr-[10%]">
           <h1
             className={`${sora.className} bg-gradient-to-r from-accent  to-white bg-clip-text
           text-5xl font-bold leading-[1.25] text-transparent
@@ -49,7 +46,7 @@ export default function Login() {
               Author
             </span>{" "}
           </p>
-          <div className="mt-[2em] flex flex-col gap-12 rounded-lg bg-gradient-to-b from-[#1A163D] to-[#181339] p-10">
+          <GradientContainer className="relative mt-[2em] flex flex-col gap-12 p-10">
             <h2
               className={`${sora.className} bg-gradient-to-r from-white  to-primary bg-clip-text text-3xl font-semibold leading-[1.15] text-transparent`}
             >
@@ -85,14 +82,14 @@ export default function Login() {
                 </div>
               </Button>
             </div>
-          </div>
+          </GradientContainer>
         </div>
         <img
           src="login-illus.svg"
           alt="login-illus"
-          className="z-[-1] scale-[110%]"
+          className="z-[-1] scale-[100%]"
         />
       </div>
-    </>
+    </BodyWrapper>
   );
 }
