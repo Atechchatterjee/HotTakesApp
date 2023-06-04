@@ -6,10 +6,14 @@ import { useStore } from "store";
 import checkRoles from "utils/checkRole";
 
 // Wrapper Component to implement protected routes
-export default function WithAuth(
-  WrappedComponent: () => React.JSX.Element,
-  redirectURI?: string
-) {
+export default function WithAuth({
+  WrappedComponent,
+  redirectURI,
+  ...props
+}: {
+  WrappedComponent: (_: any) => any;
+  redirectURI?: string;
+}) {
   function Auth() {
     const [user, setUser] = useState<Models.User<Models.Preferences>>();
     const router = useRouter();
@@ -24,24 +28,33 @@ export default function WithAuth(
 
           const { href: avatarImgSrc } = appwriteAvatars.getInitials();
 
-          const isAuthor = await checkRoles("Authors");
-
-          // adding/updating the user data in the global state
-          setUserFromStore({
-            userId: user.$id,
-            avatarImgSrc,
-            name: user.name,
-            isAuthor,
-          });
+          try {
+            const isAuthor = await checkRoles("Authors");
+            // adding/updating the user data in the global state
+            setUserFromStore({
+              userId: user.$id,
+              avatarImgSrc,
+              name: user.name,
+              isAuthor,
+            });
+          } catch (err) {
+            setUserFromStore({
+              userId: user.$id,
+              avatarImgSrc,
+              name: user.name,
+              isAuthor: false,
+            });
+          }
         } catch (err) {
           router.push(redirectURI || "/login");
           console.error(err);
           setUser(undefined);
         }
+        console.log({ props });
       })();
     }, []);
 
-    return user && <WrappedComponent />;
+    return user ? <WrappedComponent {...props} /> : <></>;
   }
-  return Auth;
+  return <Auth />;
 }
