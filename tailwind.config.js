@@ -21,6 +21,7 @@ module.exports = {
         ring: "var(--ring)",
         background: "var(--background)",
         foreground: "var(--foreground)",
+        disabled: "var(--disabled)",
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
