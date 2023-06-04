@@ -1,15 +1,9 @@
 import { create } from "zustand";
-
-export type User = {
-  userId: string;
-  avatarImgSrc: string;
-  name: string;
-  isAuthor: boolean;
-};
+import { UserSchema } from "types/dbSchemas";
 
 export type storeSchema = {
-  user: User;
-  setUser: (_: Partial<User>) => void;
+  user: UserSchema;
+  setUser: (_: Partial<UserSchema>) => void;
 };
 
 export const useStore = create<storeSchema>((set) => ({
