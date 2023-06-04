@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: #120D31;
+    --background: #100C2C ;
     --foreground: 222.2 47.4% 11.2%;
  
     --muted: 210 40% 96.1%;
@@ -22,9 +22,10 @@
     --primary: #4A41AA;
     --primary-foreground: 210 40% 98%;
 
-    --btn-secondary: #302F4D;
+    --btn-secondary: #2B2B5B;
+    --disabled: #262646;
  
-    --secondary: #211E3F;
+    --secondary: #18173b;
     --secondary-foreground: 222.2 47.4% 11.2%;
  
     --accent: #B6AFFF;
@@ -104,7 +105,7 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--accent);
+  background-color: var(--primary);
   border-radius: 14px;
   border: 3px solid var(--secondary);
 }
