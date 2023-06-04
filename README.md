@@ -8,6 +8,12 @@ The technologies that I have chosen to work with are listed below:
 - **shadcn/ui:** A "component library" (sort of) built on top of **tailwindcss** and **radix UI**
 - **tRPC:** Efficient and typesafe way to connect your frontend and backend
 
+## TL;DR of the Logic Behind Hot Takes App
+
+excalidraw link: https://excalidraw.com/#json=wXSCh76l0u8hjo9W_JWyG,89N3jKdoR3GcdFDlt9f1IA
+
+![TL;DR Logic Behind Hot Takes App](https://raw.githubusercontent.com/Atechchatterjee/HotTakesApp/main/public/TL%3BDR_Logic_Diagram_dark.png?token=GHSAT0AAAAAACC2YGBDDJPSA4RRR44AR3P6ZD4ZMEQ)
+
 # Idea Behind the HotTakesApp
 
 In the current world of ever changing tech, we have quite a lot of interesting **topics** that we as developers are constantly discussing about. This app for developers to get their opinions and hot-takes about specific topic out and open in the world. It would allow the community to have discussion / debate on various topics and hopefully have fun and learn something more about the tech.
