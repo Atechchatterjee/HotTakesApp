@@ -1,4 +1,4 @@
-import { appwriteTeam } from "./appwriteConfig";
+import getTeams from "./getTeams";
 
 /**
  * Checks if the user belongs to a given role
@@ -11,14 +11,8 @@ import { appwriteTeam } from "./appwriteConfig";
 */
 
 export default async function checkRoles(role: string): Promise<boolean> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      // returns all teams the logged in user is a member of
-      const { teams } = await appwriteTeam.list();
-      resolve(!!(teams.filter((team) => team.name === role).length > 0));
-    } catch (err) {
-      console.error(err);
-      reject(err);
-    }
-  });
+  const teams = await getTeams();
+  const noOfTeams = teams.filter((team) => team.name === role).length;
+  if (noOfTeams > 0) return Promise.resolve(true);
+  else return Promise.reject();
 }
