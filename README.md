@@ -12,7 +12,7 @@ The technologies that I have chosen to work with are listed below:
 
 excalidraw link: https://excalidraw.com/#json=wXSCh76l0u8hjo9W_JWyG,89N3jKdoR3GcdFDlt9f1IA
 
-![TL;DR Logic Behind Hot Takes App](https://raw.githubusercontent.com/Atechchatterjee/HotTakesApp/main/public/TL%3BDR_Logic_Diagram_dark.png?token=GHSAT0AAAAAACC2YGBDDJPSA4RRR44AR3P6ZD4ZMEQ)
+![TL;DR Logic Behind Hot Takes App](public/TL%3BDR_Logic_Diagram_dark.png)
 
 # Idea Behind the HotTakesApp
 
