@@ -1,5 +1,8 @@
 import "styles/globals.css";
 import { inter } from "app/fonts";
+import Head from "next/head";
+import { Toaster } from "./components/ui/toaster";
+import { ClientProvider } from "utils/trpc-provider";
 
 export const metadata = {
   title: "Next.js",
@@ -13,10 +16,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <title>Hot Takes</title>
-      </head>
-      <body className={inter.className}>{children}</body>
+      <Head>
+        <title>
+          <link href="logo.svg" />
+        </title>
+      </Head>
+      <body className={inter.className}>
+        <ClientProvider>
+          <main>{children}</main>
+          <Toaster />
+        </ClientProvider>
+      </body>
     </html>
   );
 }
