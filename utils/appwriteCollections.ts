@@ -3,4 +3,5 @@ export default {
   Challenges: "64703167686c89c761d3",
   Communities: "647aca764864042361df",
   "Community Relations": "647ae1f17304179360ed",
+  Discussion: "64796002f10893282798",
 };
