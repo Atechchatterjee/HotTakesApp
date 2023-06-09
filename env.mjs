@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    APPWRITE_API_KEY: z.string(),
   },
 
   /**
@@ -29,5 +30,6 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_APPWRITE_PROJECT_ID: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
     NEXT_PUBLIC_APPWRITE_PROJECT_ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ENDPOINT,
+    APPWRITE_API_KEY: process.env.APPWRITE_API_KEY,
   },
 });
