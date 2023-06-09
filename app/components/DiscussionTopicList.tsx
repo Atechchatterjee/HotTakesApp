@@ -8,6 +8,7 @@ import DiscussionTopicCard from "./DiscussionTopicCard";
 import { RefetchContext } from "context/RefetchContext";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import clsx from "clsx";
+import { useJoinedCommunities } from "hooks/useJoinedCommunities";
 
 export default function DiscussionTopicList({
   className,
@@ -19,6 +20,7 @@ export default function DiscussionTopicList({
   >([]);
   const { refetch, setRefetch } = useContext(RefetchContext);
   const [parent, enableAnimations] = useAutoAnimate();
+  const { communitiesJoined } = useJoinedCommunities();
 
   async function getDiscussionTopicList() {
     // waits for the user info to load

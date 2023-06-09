@@ -2,20 +2,28 @@
 import React, { useEffect, useState } from "react";
 import WithAuth from "app/components/WithAuth";
 import { useStore } from "store";
-import Sidebar from "app/components/Sidebar";
 import { inter } from "app/fonts";
 import { RefetchContext } from "context/RefetchContext";
 import { appwriteDatabase, hottakesDatabaseId } from "utils/appwriteConfig";
 import { Models, Query } from "appwrite";
 import Collections from "utils/appwriteCollections";
 import { Button } from "app/components/ui/button";
-import { ExternalLink, Search, User2, Users } from "lucide-react";
+import { ExternalLink, Search, Users } from "lucide-react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Input } from "app/components/ui/input";
 import { SelectSeparator } from "app/components/ui/select";
+import UIWrapper from "app/components/UIWrapper";
+import { join } from "path";
 
-function ListCommunities() {
-  const [communities, setCommunities] = useState<Models.Document[]>([]);
+interface ListCommunitiesProps {
+  communities: Models.Document[];
+  setCommunities: React.Dispatch<React.SetStateAction<Models.Document[]>>;
+}
+
+function ListCommunities({
+  communities,
+  setCommunities,
+}: ListCommunitiesProps) {
   const [parent, enableAnimations] = useAutoAnimate();
   const [joined, setJoined] = useState<Set<string>>(new Set());
   const { userId } = useStore((state) => state.user);
@@ -46,7 +54,7 @@ function ListCommunities() {
 
         communities.forEach((community) => {
           _communities.forEach((_community) => {
-            if (community.$id === _community.communities.$id) {
+            if (community.$id === _community.communities[0].$id) {
               newJoined.add(community.$id);
             }
           });
@@ -66,7 +74,7 @@ function ListCommunities() {
         "",
         {
           userId,
-          communities: community.$id,
+          communities: [community.$id],
         }
       );
       setJoined((prevState) => new Set([...prevState, community.$id]));
@@ -86,7 +94,7 @@ function ListCommunities() {
       {communities.map((community, i) => {
         return (
           <div
-            className="flex flex-col gap-2 rounded-lg border border-btn_secondary bg-secondary pb-5 pl-7 pr-7 pt-5 transition-all duration-300 hover:brightness-110"
+            className="flex flex-col gap-2 rounded-lg border border-btn_secondary bg-secondary pb-5 pl-7 pr-7 pt-5 transition-all duration-300 hover:brightness-[130%]"
             key={i}
           >
             <h2 className={`${inter.className} text-2xl font-bold`}>
@@ -101,7 +109,9 @@ function ListCommunities() {
               <Button
                 variant="primary"
                 className={"flex-1 gap-2"}
-                disabled={joined.has(community.$id)}
+                disabled={
+                  joined.has(community.$id) || userId === community.author
+                }
                 onClick={() => {
                   joinCommunities(community);
                 }}
@@ -122,37 +132,70 @@ function ListCommunities() {
 }
 
 function Community() {
+  const [communities, setCommunities] = useState<Models.Document[]>([]);
+  const [searchedCommunities, setSearchedCommunities] = useState<
+    Models.Document[]
+  >([]);
   const [refetch, setRefetch] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
+
+  async function searchCommunityByTopic() {
+    console.log("searching for: ", search);
+    try {
+      const { documents: searchedDocuments } =
+        await appwriteDatabase.listDocuments(
+          hottakesDatabaseId,
+          Collections["Communities"],
+          [Query.search("name", search)]
+        );
+      setSearchedCommunities(searchedDocuments);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <RefetchContext.Provider value={{ refetch, setRefetch }}>
-      <div className="h-[100svh] bg-secondary">
-        <Sidebar />
-        <div className="fixed top-[0] z-[100] ml-[18%] mt-[0.85em] h-[97svh] w-[81%] overflow-y-auto rounded-xl border border-btn_secondary bg-background pl-[4%] pr-[4%] pt-[2%] shadow-xl shadow-background">
-          <div className="mb-10 flex flex-col gap-2">
-            <h1
-              className={`${inter.className} bg-gradient-to-r  from-accent to-white bg-clip-text text-4xl font-bold leading-[1.25] text-transparent`}
+      <UIWrapper>
+        <div className="mb-10 flex flex-col gap-2">
+          <h1
+            className={`${inter.className} bg-gradient-to-r  from-accent to-white bg-clip-text text-4xl font-bold leading-[1.25] text-transparent`}
+          >
+            Choose Your Community
+          </h1>
+          <p className="text-gray-400">
+            Pick a community of your liking and start participating
+          </p>
+          <div className="mt-5 flex h-[3rem] gap-2">
+            <Input
+              autoFocus
+              placeholder="Find your community"
+              className="h-full border border-btn_secondary bg-secondary hover:brightness-[130%] focus:border focus:border-primary focus:brightness-[130%]"
+              onChange={(e: any) => setSearch(e.target.value)}
+            />
+            <Button
+              variant="primary"
+              className="h-full gap-2"
+              size="lg"
+              onClick={searchCommunityByTopic}
             >
-              Choose Your Community
-            </h1>
-            <p className="text-gray-400">
-              Pick a community of your liking and start participating
-            </p>
-            <div className="mt-5 flex h-[3rem] gap-2">
-              <Input
-                placeholder="Find your community"
-                className="h-full border border-btn_secondary bg-secondary hover:brightness-[130%] focus:border focus:border-primary focus:brightness-[130%]"
-              />
-              <Button variant="primary" className="h-full gap-2" size="lg">
-                <Search size="1rem" />
-                Search
-              </Button>
-            </div>
-            <SelectSeparator className="mt-10 bg-btn_secondary" />
-            <ListCommunities />
+              <Search size="1rem" />
+              Search
+            </Button>
           </div>
+          <SelectSeparator className="mt-10 bg-btn_secondary" />
+          <ListCommunities
+            communities={
+              searchedCommunities.length > 0 ? searchedCommunities : communities
+            }
+            setCommunities={
+              searchedCommunities.length > 0
+                ? setSearchedCommunities
+                : setCommunities
+            }
+          />
         </div>
-      </div>
+      </UIWrapper>
     </RefetchContext.Provider>
   );
 }

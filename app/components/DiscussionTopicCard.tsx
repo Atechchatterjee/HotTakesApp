@@ -3,12 +3,13 @@ import { Button } from "app/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { useStore } from "store";
-import { Pause, Play, X } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 import clsx from "clsx";
 import { appwriteDatabase, hottakesDatabaseId } from "utils/appwriteConfig";
 import Collection from "utils/appwriteCollections";
 import { useContext } from "react";
 import { RefetchContext } from "context/RefetchContext";
+import DivWrapper from "./DivWrapper";
 
 export default function DiscussionTopicCard({
   discussionTopic,
@@ -46,17 +47,22 @@ export default function DiscussionTopicCard({
   }
 
   return (
-    <div
-      className={clsx(
-        "flex flex-col gap-3 rounded-lg border border-btn_secondary transition-all duration-300 hover:brightness-110",
-        disabled ? "bg-disabled" : "bg-secondary",
-        "pb-[1em] pl-[2em] pr-[2em] pt-[1em]"
-      )}
+    <DivWrapper
+      className="pb-[1em] pl-[2em] pr-[2em] pt-[1em]"
+      highlight={disabled}
     >
       <h2 className="text-[1.3rem] font-bold">{discussionTopic.topic}</h2>
-      <Badge className="w-[4rem] justify-center bg-btn_secondary">
+      <Badge
+        className={clsx(
+          "w-[4rem] justify-center bg-btn_secondary",
+          disabled && "brightness-[75%]"
+        )}
+      >
         {discussionTopic.type}
       </Badge>
+      {discussionTopic.description && (
+        <p className="text-gray-400">{discussionTopic.description}</p>
+      )}
       <div className="flex gap-5">
         {user.isAuthor &&
           (discussionTopic.active ? (
@@ -88,10 +94,11 @@ export default function DiscussionTopicCard({
           onClick={() => {
             router.push(`/discussions/${discussionTopic.$id}`);
           }}
+          disabled={disabled}
         >
           Participate
         </Button>
       </div>
-    </div>
+    </DivWrapper>
   );
 }

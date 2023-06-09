@@ -9,8 +9,6 @@ import {
   LayoutList,
   LucideIcon,
   Swords,
-  User,
-  User2,
   Users,
 } from "lucide-react";
 import clsx from "clsx";
