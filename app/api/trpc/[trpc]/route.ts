@@ -10,10 +10,10 @@ const handler = (request: Request) => {
     endpoint: "/api/trpc",
     req: request,
     router: appRouter,
-    createContext: function (
-      opts: FetchCreateContextFnOptions
-    ): object | Promise<object> {
-      return {};
+    createContext: function (opts: FetchCreateContextFnOptions) {
+      return {
+        session: opts.req.headers.get("cookie"),
+      };
     },
   });
 };

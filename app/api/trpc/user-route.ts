@@ -5,8 +5,9 @@ import { publicProcedure } from "./trpc";
 export function getUser() {
   return publicProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       try {
+        console.log({ ctx });
         const user = await appwriteUsers.get(input.userId);
         return {
           user: user,
