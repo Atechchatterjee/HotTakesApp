@@ -79,7 +79,7 @@ export default function Sidebar({
 
   useEffect(() => {
     setMenuItemSelected({
-      ref: pathName.substring(pathName.lastIndexOf("/") + 1),
+      ref: pathName.split("/")[1],
     } as Pick<MenuItemType, "ref">);
     enableAnimations(true);
   }, []);
