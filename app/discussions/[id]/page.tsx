@@ -4,7 +4,6 @@ import { Models, Query } from "appwrite";
 import { PauseCircle, Plus } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { appwriteDatabase, hottakesDatabaseId } from "utils/appwriteConfig";
-import Collection from "utils/appwriteCollections";
 import { sora } from "app/fonts";
 import WithAuth from "app/components/WithAuth";
 import UIWrapper from "app/components/UIWrapper";
@@ -17,6 +16,7 @@ import { trpc } from "utils/trpc";
 import clsx from "clsx";
 import DivWrapper from "app/components/DivWrapper";
 import { RefetchContext } from "context/RefetchContext";
+import { useQuery } from "@tanstack/react-query";
 
 interface DiscussionsProps {
   params: { id: string };
@@ -41,22 +41,18 @@ function ListDiscussions({ id }: { id: string }) {
   const user = useStore((state) => state.user);
   const { refetch, setRefetch } = useContext(RefetchContext);
 
-  async function searchDiscussions() {
-    try {
+  useQuery({
+    queryKey: [refetch],
+    queryFn: async () => {
       const { documents: discussions } = await appwriteDatabase.listDocuments(
         hottakesDatabaseId,
-        Collection["Discussion"],
+        Collections["Discussion"],
         [Query.equal("discussionTopics", [id])]
       );
       setDiscussions(discussions);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  useEffect(() => {
-    searchDiscussions().then(() => setRefetch(false));
-  }, [refetch]);
+      setRefetch(false);
+    },
+  });
 
   return (
     <div className="mt-10 flex flex-col gap-5 pb-10">
@@ -96,7 +92,7 @@ function Discussions({ params: { id } }: DiscussionsProps) {
       setCurrentDiscussionTopic(
         await appwriteDatabase.getDocument(
           hottakesDatabaseId,
-          Collection["Discussion Topics"],
+          Collections["Discussion Topics"],
           id
         )
       );
@@ -181,12 +177,9 @@ function Discussions({ params: { id } }: DiscussionsProps) {
           </>
         ) : (
           currentDiscussionTopic && (
-            <div className="mt-10 flex gap-2 rounded-lg bg-btn_secondary p-5">
-              <PauseCircle
-                className="self-center text-rose-500"
-                size="1.2rem"
-              />
-              <p className=" self-center text-lg font-semibold text-rose-500">
+            <div className="mt-10 flex gap-2 rounded-lg bg-btn_secondary p-5 text-rose-300">
+              <PauseCircle className="self-center" size="1.2rem" />
+              <p className=" self-center text-lg font-semibold">
                 Discussion Paused:
               </p>
               <p className="text-md self-center text-gray-400">
