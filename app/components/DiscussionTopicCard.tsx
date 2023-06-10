@@ -1,4 +1,5 @@
-import { Models } from "appwrite";
+"use client";
+import { Models, Query } from "appwrite";
 import { Button } from "app/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
@@ -7,7 +8,7 @@ import { Pause, Play } from "lucide-react";
 import clsx from "clsx";
 import { appwriteDatabase, hottakesDatabaseId } from "utils/appwriteConfig";
 import Collection from "utils/appwriteCollections";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { RefetchContext } from "context/RefetchContext";
 import DivWrapper from "./DivWrapper";
 
@@ -21,8 +22,9 @@ export default function DiscussionTopicCard({
   const router = useRouter();
   const user = useStore((state) => state.user);
   const { setRefetch } = useContext(RefetchContext);
+  const [participating, setParticipating] = useState<boolean>(false);
 
-  async function setDiscussionState(discussionState: boolean) {
+  async function setDiscussionStatus(discussionState: boolean) {
     try {
       await appwriteDatabase.updateDocument(
         hottakesDatabaseId,
@@ -37,14 +39,83 @@ export default function DiscussionTopicCard({
   }
 
   async function stopDiscussion() {
-    await setDiscussionState(false);
+    await setDiscussionStatus(false);
     setRefetch(true);
   }
 
   async function resumeDiscussion() {
-    await setDiscussionState(true);
+    await setDiscussionStatus(true);
     setRefetch(true);
   }
+
+  async function checkIfAlreadyParticipating(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { documents } = await appwriteDatabase.listDocuments(
+          hottakesDatabaseId,
+          Collection["Participation"],
+          [
+            Query.equal("discussionTopics", [discussionTopic.$id]),
+            Query.equal("userId", [user.userId]),
+          ]
+        );
+        if (documents.length === 0) {
+          setParticipating(false);
+          reject();
+        } else {
+          setParticipating(true);
+          resolve();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  async function incrementNoOfParticipants() {
+    try {
+      await appwriteDatabase.updateDocument(
+        hottakesDatabaseId,
+        Collection["Discussion Topics"],
+        discussionTopic.$id,
+        {
+          participants: discussionTopic.participants + 1,
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function addParticipation(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        incrementNoOfParticipants();
+        await appwriteDatabase.createDocument(
+          hottakesDatabaseId,
+          Collection["Participation"],
+          "",
+          {
+            userId: user.userId,
+            discussionTopics: discussionTopic.$id,
+          }
+        );
+        setParticipating(true);
+        resolve();
+      } catch (err) {
+        console.error(err);
+        reject(err);
+      }
+    });
+  }
+
+  function handleParticipation() {
+    checkIfAlreadyParticipating().catch(() => addParticipation());
+  }
+
+  useEffect(() => {
+    checkIfAlreadyParticipating();
+  }, []);
 
   return (
     <DivWrapper
@@ -88,16 +159,29 @@ export default function DiscussionTopicCard({
               Resume Discussion
             </Button>
           ))}
-        <Button
-          variant="secondary"
-          className="mt-[2rem] w-[8rem]"
-          onClick={() => {
-            router.push(`/discussions/${discussionTopic.$id}`);
-          }}
-          disabled={disabled}
-        >
-          Participate
-        </Button>
+        {!participating ? (
+          <Button
+            variant="secondary"
+            className="mt-[2rem] w-[8rem]"
+            onClick={() => {
+              handleParticipation();
+            }}
+            disabled={disabled}
+          >
+            Participate
+          </Button>
+        ) : (
+          <Button
+            variant="secondary"
+            className="mt-[2rem] w-[10rem]"
+            onClick={() => {
+              router.push(`/discussions/${discussionTopic.$id}`);
+            }}
+            disabled={disabled}
+          >
+            Dicussion Thread
+          </Button>
+        )}
       </div>
     </DivWrapper>
   );
