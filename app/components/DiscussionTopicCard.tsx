@@ -11,6 +11,8 @@ import Collection from "utils/appwriteCollections";
 import { useContext, useEffect, useState } from "react";
 import { RefetchContext } from "context/RefetchContext";
 import DivWrapper from "./DivWrapper";
+import { useQuery } from "@tanstack/react-query";
+import { set } from "zod";
 
 export default function DiscussionTopicCard({
   discussionTopic,
@@ -23,30 +25,23 @@ export default function DiscussionTopicCard({
   const user = useStore((state) => state.user);
   const { setRefetch } = useContext(RefetchContext);
   const [participating, setParticipating] = useState<boolean>(false);
+  const [discussionStatus, setDiscussionStatus] = useState<boolean>(true);
+  const [updateDiscussionStatus, setUpdateDiscussionStatus] =
+    useState<boolean>(false);
 
-  async function setDiscussionStatus(discussionState: boolean) {
-    try {
-      await appwriteDatabase.updateDocument(
+  useQuery({
+    queryKey: ["discussionStatus", discussionStatus],
+    enabled: updateDiscussionStatus,
+    queryFn: async function updateDiscussionStatus({ queryKey }) {
+      return await appwriteDatabase.updateDocument(
         hottakesDatabaseId,
         Collection["Discussion Topics"],
         discussionTopic.$id,
-        { active: discussionState }
+        { active: discussionStatus }
       );
-    } catch (err) {
-      alert("Update failed");
-      console.error(err);
-    }
-  }
-
-  async function stopDiscussion() {
-    await setDiscussionStatus(false);
-    setRefetch(true);
-  }
-
-  async function resumeDiscussion() {
-    await setDiscussionStatus(true);
-    setRefetch(true);
-  }
+      setRefetch(true);
+    },
+  });
 
   async function checkIfAlreadyParticipating(): Promise<void> {
     return new Promise(async (resolve, reject) => {
@@ -141,7 +136,8 @@ export default function DiscussionTopicCard({
               variant="primary"
               className="mt-[2rem] w-[12rem] gap-3"
               onClick={() => {
-                stopDiscussion();
+                setUpdateDiscussionStatus(true);
+                setDiscussionStatus(false);
               }}
             >
               <Pause size="1rem" />
@@ -152,7 +148,8 @@ export default function DiscussionTopicCard({
               variant="primary"
               className="mt-[2rem] w-[12rem] gap-3"
               onClick={() => {
-                resumeDiscussion();
+                setUpdateDiscussionStatus(true);
+                setDiscussionStatus(true);
               }}
             >
               <Play size="1rem" />
