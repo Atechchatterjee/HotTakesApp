@@ -1,6 +1,6 @@
 export default {
   "Discussion Topics": "64781c0921536a045c33",
-  Challenges: "64703167686c89c761d3",
+  Challenges: "6483faf72a991ebb0a46",
   Communities: "647aca764864042361df",
   "Community Relations": "647ae1f17304179360ed",
   Discussion: "64796002f10893282798",
