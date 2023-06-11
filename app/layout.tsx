@@ -3,6 +3,7 @@ import { inter } from "app/fonts";
 import Head from "next/head";
 import { Toaster } from "./components/ui/toaster";
 import { ClientProvider } from "utils/trpc-provider";
+import Provider from "utils/provider";
 
 export const metadata = {
   title: "Next.js",
@@ -23,7 +24,9 @@ export default function RootLayout({
       </Head>
       <body className={inter.className}>
         <ClientProvider>
-          <main>{children}</main>
+          <Provider>
+            <main>{children}</main>
+          </Provider>
           <Toaster />
         </ClientProvider>
       </body>
