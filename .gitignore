@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/web-socket-server/node_modules
 /.pnp
 .pnp.js
 
@@ -23,6 +24,7 @@ next-env.d.ts
 # misc
 .DS_Store
 *.pem
+.idea
 
 # debug
 npm-debug.log*
