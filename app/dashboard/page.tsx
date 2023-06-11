@@ -50,7 +50,6 @@ function ListDiscussions() {
 
 function CommunitiesJoined() {
   const { communitiesJoined } = useJoinedCommunities();
-  const userId = useStore((state) => state.user.userId);
   const router = useRouter();
 
   return (
@@ -69,7 +68,7 @@ function CommunitiesJoined() {
       <div className="mt-10 flex flex-col gap-5">
         {communitiesJoined.map((community, i) => {
           return (
-            <DivWrapper>
+            <DivWrapper key={i}>
               <h2 className={`${inter.className} text-2xl font-bold`}>
                 {community.communities[0].name}
               </h2>
