@@ -31,7 +31,7 @@ export default function ListCommunities({
   const router = useRouter();
 
   useQuery({
-    queryFn: async () => {
+    queryFn: async function fetchCommunities() {
       const { documents } = await appwriteDatabase.listDocuments(
         hottakesDatabaseId,
         Collections["Communities"]
@@ -42,7 +42,7 @@ export default function ListCommunities({
 
   useQuery({
     queryKey: [userId, communities],
-    queryFn: async () => {
+    queryFn: async function fetchJoinedDiscussions() {
       const { documents: _communities } = await appwriteDatabase.listDocuments(
         hottakesDatabaseId,
         Collections["Community Relations"],
@@ -65,7 +65,7 @@ export default function ListCommunities({
   });
 
   const { refetch: joinCommunity } = useQuery({
-    queryFn: async () => {
+    queryFn: async function joinCommunity() {
       await appwriteDatabase.createDocument(
         hottakesDatabaseId,
         Collections["Community Relations"],
