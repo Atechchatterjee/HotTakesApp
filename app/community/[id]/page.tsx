@@ -3,11 +3,12 @@ import WithAuth from "app/components/WithAuth";
 import { appwriteDatabase, hottakesDatabaseId } from "utils/appwriteConfig";
 import Collections from "utils/appwriteCollections";
 import { Query, type Models } from "appwrite";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DiscussionTopicCard from "app/components/DiscussionTopicCard";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { inter } from "app/fonts";
 import UIWrapper from "app/components/UIWrapper";
+import { useQuery } from "@tanstack/react-query";
 
 interface CommunityPageProps {
   params: { id: string };
@@ -17,9 +18,10 @@ function CommunityPage({ params: { id } }: CommunityPageProps) {
   const [relatedDiscussions, setRelatedDiscussions] = useState<
     Models.Document[]
   >([]);
+  const [parent, enableAnimations] = useAutoAnimate();
 
-  async function fetchRelatedDiscussionTopics() {
-    try {
+  useQuery({
+    queryFn: async function fetchRelatedDiscussions() {
       const { documents: _relatedDiscussions } =
         await appwriteDatabase.listDocuments(
           hottakesDatabaseId,
@@ -27,16 +29,9 @@ function CommunityPage({ params: { id } }: CommunityPageProps) {
           [Query.equal("community", [id])]
         );
       setRelatedDiscussions(_relatedDiscussions);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  useEffect( () => {
-    void fetchRelatedDiscussionTopics().then(() => enableAnimations(true));
-  }, []);
-
-  const [parent, enableAnimations] = useAutoAnimate();
+      enableAnimations(true);
+    },
+  });
 
   return (
     <UIWrapper>
