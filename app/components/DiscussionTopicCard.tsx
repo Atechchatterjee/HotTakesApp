@@ -33,13 +33,14 @@ export default function DiscussionTopicCard({
     queryKey: ["discussionStatus", discussionStatus],
     enabled: updateDiscussionStatus,
     queryFn: async function updateDiscussionStatus({ queryKey }) {
-      return await appwriteDatabase.updateDocument(
+      const promise = await appwriteDatabase.updateDocument(
         hottakesDatabaseId,
         Collection["Discussion Topics"],
         discussionTopic.$id,
         { active: discussionStatus }
       );
       setRefetch(true);
+      return promise;
     },
   });
 
@@ -131,6 +132,7 @@ export default function DiscussionTopicCard({
       )}
       <div className="flex gap-5">
         {user.isAuthor &&
+          discussionTopic.author === user.userId &&
           (discussionTopic.active ? (
             <Button
               variant="primary"

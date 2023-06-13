@@ -37,6 +37,7 @@ export default function ListCommunities({
         Collections["Communities"]
       );
       setCommunities(documents);
+      return documents;
     },
   });
 
@@ -61,12 +62,15 @@ export default function ListCommunities({
       });
 
       setJoinedCommunitySet(newJoined);
+      return _communities;
     },
   });
 
   const { refetch: joinCommunity } = useQuery({
+    enabled: !!communityToJoin,
+    queryKey: ["communityToJoin", communityToJoin],
     queryFn: async function joinCommunity() {
-      await appwriteDatabase.createDocument(
+      const promise = await appwriteDatabase.createDocument(
         hottakesDatabaseId,
         Collections["Community Relations"],
         "",
@@ -78,6 +82,7 @@ export default function ListCommunities({
       setJoinedCommunitySet(
         (prevState) => new Set([...prevState, communityToJoin?.$id || ""])
       );
+      return promise;
     },
   });
 

@@ -31,12 +31,14 @@ io.on("connection", (socket) => {
   });
   socket.on(
     "send-challenge-message",
-    ({ currentChallenge, challengeMessage }) => {
+    ({ challenge, challengeMessage, to, from }) => {
       socket.broadcast.emit("broadcast-challenge-message", {
-        currentChallenge,
+        challenge,
         challengeMessage,
+        to,
+        from,
       });
-      console.log({ currentChallenge, challengeMessage });
+      console.log({ challenge, challengeMessage, to, from });
     }
   );
 });
