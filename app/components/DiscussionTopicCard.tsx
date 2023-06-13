@@ -4,7 +4,6 @@ import { Button } from "app/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { useStore } from "store";
-import { Pause, Play } from "lucide-react";
 import clsx from "clsx";
 import { appwriteDatabase, hottakesDatabaseId } from "utils/appwriteConfig";
 import Collection from "utils/appwriteCollections";
@@ -12,7 +11,10 @@ import { useContext, useEffect, useState } from "react";
 import { RefetchContext } from "context/RefetchContext";
 import DivWrapper from "./DivWrapper";
 import { useQuery } from "@tanstack/react-query";
-import { set } from "zod";
+import { GiPauseButton } from "react-icons/gi";
+import { FaPlay } from "react-icons/fa";
+import { RiDiscussFill } from "react-icons/ri";
+import { credibilityIncrements } from "utils/credibilityScore";
 
 export default function DiscussionTopicCard({
   discussionTopic,
@@ -83,10 +85,33 @@ export default function DiscussionTopicCard({
     }
   }
 
+  async function incremenetCredibilityScore() {
+    try {
+      const prevUserData = await appwriteDatabase.getDocument(
+        hottakesDatabaseId,
+        Collection["User"],
+        user.userId
+      );
+      await appwriteDatabase.updateDocument(
+        hottakesDatabaseId,
+        Collection["User"],
+        user.userId,
+        {
+          credibilityScore:
+            prevUserData.credibilityScore +
+            credibilityIncrements.incParticipation,
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function addParticipation(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
         incrementNoOfParticipants();
+        incremenetCredibilityScore();
         await appwriteDatabase.createDocument(
           hottakesDatabaseId,
           Collection["Participation"],
@@ -142,7 +167,7 @@ export default function DiscussionTopicCard({
                 setDiscussionStatus(false);
               }}
             >
-              <Pause size="1rem" />
+              <GiPauseButton />
               Stop Discussion
             </Button>
           ) : (
@@ -154,7 +179,7 @@ export default function DiscussionTopicCard({
                 setDiscussionStatus(true);
               }}
             >
-              <Play size="1rem" />
+              <FaPlay />
               Resume Discussion
             </Button>
           ))}
@@ -172,12 +197,13 @@ export default function DiscussionTopicCard({
         ) : (
           <Button
             variant="secondary"
-            className="mt-[2rem] w-[10rem]"
+            className="mt-[2rem] w-[12rem] gap-3"
             onClick={() => {
               router.push(`/discussions/${discussionTopic.$id}`);
             }}
             disabled={disabled}
           >
+            <RiDiscussFill />
             Dicussion Thread
           </Button>
         )}
