@@ -16,7 +16,7 @@ const buttonVariants = cva(
           "border border-input hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-btn_secondary text-secondary-foreground hover:brightness-125",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:brightness-[110%] hover:text-white",
         link: "underline-offset-4 hover:underline text-primary",
       },
       size: {
@@ -47,7 +47,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          "focus: border border-transparent focus:border-accent focus:brightness-[95%]"
+          "focus: border border-transparent focus:border-primary focus:brightness-[95%]"
         )}
         ref={ref}
         {...props}
