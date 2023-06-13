@@ -9,13 +9,14 @@ import { appwriteDatabase } from "utils/appwriteConfig";
 import { hottakesDatabaseId } from "utils/appwriteConfig";
 import { useSocket } from "utils/useSocket";
 import Collections from "utils/appwriteCollections";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "store";
 import { Models, Query } from "appwrite";
 import DivWrapper from "app/components/DivWrapper";
 import { trpc } from "utils/trpc";
 import { inter } from "app/fonts";
 import { SelectSeparator } from "app/components/ui/select";
+import Vote from "app/components/Vote";
 
 function ChallengeThread({ params: { id } }: { params: { id: string } }) {
   const [challengeMessage, setChallengeMessage] = useState<string>("");
@@ -30,6 +31,8 @@ function ChallengeThread({ params: { id } }: { params: { id: string } }) {
   const [currentUserChallengeStatus, setCurrentUserChallengeStatus] = useState<
     "challenger" | "challenged"
   >();
+  const [challengerVote, setChallengerVote] = useState<"up" | "down">();
+  const [challengedVote, setChallengedVote] = useState<"up" | "down">();
 
   const { data: currentChallenge } = useQuery({
     queryKey: ["user", user],
@@ -174,6 +177,197 @@ function ChallengeThread({ params: { id } }: { params: { id: string } }) {
     );
   }
 
+  useQuery({
+    queryKey: [
+      "user",
+      user,
+      "challenged",
+      challenged,
+      "challenger",
+      challenger,
+    ],
+    queryFn: async function fetchVotes() {
+      if (challenged && challenger) {
+        const { documents: existingChallengeVotes } =
+          await appwriteDatabase.listDocuments(
+            hottakesDatabaseId,
+            Collections["Challenge Votes"],
+            [Query.equal("userId", [user.userId])]
+          );
+        for (const existingChallengeVote of existingChallengeVotes) {
+          if (challenger?.user?.$id === existingChallengeVote.voteFor)
+            setChallengerVote(existingChallengeVote.type);
+          if (challenged?.user?.$id === existingChallengeVote.voteFor)
+            setChallengedVote(existingChallengeVote.type);
+        }
+        return existingChallengeVotes;
+      }
+      return {};
+    },
+  });
+
+  const [challengerVoteFirstTime, setChallengerVoteFirstTime] =
+    useState<boolean>(true);
+  const [challengedVoteFirstTime, setChallengedVoteFirstTime] =
+    useState<boolean>(true);
+
+  const [currentChallengerVotes, setCurrentChallengerVotes] =
+    useState<number>(0);
+  const [currentChallengedVotes, setCurrentChallengedVotes] =
+    useState<number>(0);
+
+  useEffect(() => {
+    if (currentChallenge) {
+      setCurrentChallengedVotes(currentChallenge?.challengedVotes);
+      setCurrentChallengerVotes(currentChallenge?.challengerVotes);
+    }
+  }, [currentChallenge]);
+
+  // increments the challengerVotes in the "Challenge" collection
+  async function addVotesForChallenger(challengerVoteType: "up" | "down") {
+    if (currentChallenge) {
+      let updatedVote = 0;
+      if (challengerVoteType === "up") {
+        updatedVote =
+          currentChallengerVotes + (challengerVoteFirstTime ? 1 : 2);
+      } else {
+        updatedVote =
+          currentChallengerVotes - (challengerVoteFirstTime ? 1 : 2);
+      }
+      try {
+        alert("updating with challengedVotes: " + updatedVote);
+        await appwriteDatabase.updateDocument(
+          hottakesDatabaseId,
+          Collections["Challenges"],
+          currentChallenge.$id || "",
+          {
+            challengerVotes: updatedVote,
+          }
+        );
+        setCurrentChallengerVotes(updatedVote);
+        setChallengerVoteFirstTime(false);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  async function addVotesForChallenged(challengedVoteType: "up" | "down") {
+    if (currentChallenge) {
+      let updatedVote = 0;
+      if (challengedVoteType === "up") {
+        updatedVote =
+          currentChallengedVotes + (challengedVoteFirstTime ? 1 : 2);
+      } else {
+        updatedVote =
+          currentChallengedVotes - (challengedVoteFirstTime ? 1 : 2);
+      }
+      // alert(updatedVote);
+      try {
+        alert("updating with challengedVotes: " + updatedVote);
+        await appwriteDatabase.updateDocument(
+          hottakesDatabaseId,
+          Collections["Challenges"],
+          currentChallenge.$id || "",
+          {
+            challengedVotes: updatedVote,
+          }
+        );
+        setCurrentChallengedVotes(updatedVote);
+        setChallengedVoteFirstTime(false);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  // checks if the user has voted for the challenged/challenger before
+  // if yes -> it sets challengeVoteFirstTime to false for the challenger/challenged
+  useEffect(() => {
+    if (challenged && challenger) {
+      (async () => {
+        try {
+          // check for exisiting documents it "Challenge Votes" collection
+          const { documents: existingChallengeVotes } =
+            await appwriteDatabase.listDocuments(
+              hottakesDatabaseId,
+              Collections["Challenge Votes"],
+              [
+                Query.equal("userId", [user.userId]),
+                Query.equal("voteFor", [
+                  challenged?.user?.$id || "",
+                  challenger?.user?.$id || "",
+                ]),
+              ]
+            );
+          existingChallengeVotes.forEach((existingChallengeVote) => {
+            if (existingChallengeVote.voteFor === challenged?.user?.$id) {
+              setChallengedVoteFirstTime(false);
+            }
+            if (existingChallengeVote.voteFor === challenger?.user?.$id) {
+              setChallengerVoteFirstTime(false);
+            }
+          });
+        } catch (err) {
+          setChallengedVoteFirstTime(false);
+          setChallengerVoteFirstTime(false);
+        }
+      })();
+    }
+  }, [challenged, challenger]);
+
+  async function handleVotes(voteFor: string, type: "up" | "down") {
+    if (voteFor === "") return;
+    try {
+      // check for exisiting documents it "Challenge Votes" collection
+      const { documents: existingChallengeVotes } =
+        await appwriteDatabase.listDocuments(
+          hottakesDatabaseId,
+          Collections["Challenge Votes"],
+          [
+            Query.equal("userId", [user.userId]),
+            Query.equal("voteFor", [voteFor]),
+          ]
+        );
+      // updating the documents
+      if (existingChallengeVotes && existingChallengeVotes[0]) {
+        await appwriteDatabase.updateDocument(
+          hottakesDatabaseId,
+          Collections["Challenge Votes"],
+          existingChallengeVotes[0].$id,
+          { voteFor, type }
+        );
+        if (voteFor === challenged?.user?.$id)
+          setChallengedVoteFirstTime(false);
+        if (voteFor === challenger?.user?.$id)
+          setChallengerVoteFirstTime(false);
+      } else {
+        if (voteFor === challenged?.user?.$id) setChallengedVoteFirstTime(true);
+        if (voteFor === challenger?.user?.$id) setChallengerVoteFirstTime(true);
+        // document does not exist in "Challenge Votes" collection -> creating a new document
+        try {
+          await appwriteDatabase.createDocument(
+            hottakesDatabaseId,
+            Collections["Challenge Votes"],
+            "",
+            {
+              userId: user.userId,
+              challenges: currentChallenge?.$id,
+              voteFor,
+              type,
+            }
+          );
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (voteFor === challenged?.user?.$id) addVotesForChallenged(type);
+      if (voteFor === challenger?.user?.$id) addVotesForChallenger(type);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <UIWrapper className="pl-0 pr-0">
       <div className="flex h-[84vh] flex-col gap-5 overflow-auto pl-[3%] pr-[3%]">
@@ -191,17 +385,21 @@ function ChallengeThread({ params: { id } }: { params: { id: string } }) {
             <p>
               Challenger:{" "}
               <span className="font-semibold text-white">
-                {currentChallenge?.challenger === user.userId
-                  ? "You"
-                  : findOtherUser()?.name}
+                {isParticipant(user.userId)
+                  ? currentChallenge?.challenger === user.userId
+                    ? "You"
+                    : findOtherUser()?.name
+                  : challenger?.user?.name}
               </span>
             </p>
             <p>
               Challenged:{" "}
               <span className="font-semibold text-white">
-                {currentChallenge?.challenged === user.userId
-                  ? "You"
-                  : findOtherUser()?.name}
+                {isParticipant(user.userId)
+                  ? currentChallenge?.challenged === user.userId
+                    ? "You"
+                    : findOtherUser()?.name
+                  : challenged?.user?.name}
               </span>
             </p>
           </div>
@@ -224,8 +422,8 @@ function ChallengeThread({ params: { id } }: { params: { id: string } }) {
         </div>
       </div>
       <div className="absolute bottom-0 h-[9.2vh] w-full rounded-lg rounded-t-none border-t-2 border-btn_secondary bg-secondary pl-[2em] pr-[2em]">
-        {isParticipant(user.userId) &&
-          (challengerMessages[challengerMessages?.length - 1]?.author?.user
+        {isParticipant(user.userId) ? (
+          challengerMessages[challengerMessages?.length - 1]?.author?.user
             ?.$id !== user.userId ? (
             <div className="flex h-full w-full gap-3">
               <Input
@@ -259,7 +457,40 @@ function ChallengeThread({ params: { id } }: { params: { id: string } }) {
                 Please wait for your turn to reply
               </p>
             </div>
-          ))}
+          )
+        ) : (
+          <div className="flex h-full w-full justify-center gap-5">
+            <p className="self-center font-semibold text-gray-400">VOTE: </p>
+            <div className="flex gap-10 text-gray-400">
+              <div className="flex gap-3 self-center">
+                <span className="self-center"> Challenger:</span>
+                <span className="self-center font-semibold text-white">
+                  {challenger?.user?.name}
+                </span>
+                <Vote
+                  className="self-center rounded-md bg-btn_secondary"
+                  voteState={[challengerVote, setChallengerVote]}
+                  onVote={(vote) => {
+                    handleVotes(challenger?.user?.$id || "", vote);
+                  }}
+                />
+              </div>
+              <div className="flex gap-3 self-center">
+                <span className="self-center"> Challenged:</span>
+                <span className="self-center font-semibold text-white">
+                  {challenged?.user?.name}
+                </span>
+                <Vote
+                  className="self-center rounded-md bg-btn_secondary"
+                  voteState={[challengedVote, setChallengedVote]}
+                  onVote={(vote) => {
+                    handleVotes(challenged?.user?.$id || "", vote);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </UIWrapper>
   );
