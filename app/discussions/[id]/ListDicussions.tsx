@@ -13,6 +13,8 @@ import DivWrapper from "app/components/DivWrapper";
 import { RefetchContext } from "context/RefetchContext";
 import { useQuery } from "@tanstack/react-query";
 import { useSocket } from "utils/useSocket";
+import { ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function DisplayUser({
   className,
@@ -42,6 +44,7 @@ export default function ListDiscussions({ id }: { id: string }) {
   const { refetch, setRefetch } = useContext(RefetchContext);
   const { socket } = useSocket();
   const { toast } = useToast();
+  const router = useRouter();
 
   const user = useStore((state) => state.user);
 
@@ -131,10 +134,40 @@ export default function ListDiscussions({ id }: { id: string }) {
     },
   });
 
+  const { data: challengeThreadIds } = useQuery({
+    queryKey: ["refetch", refetch, "user", user, "discussions", discussions],
+    queryFn: async function fetchChallengeThreadId() {
+      if (discussions) {
+        const { documents: challenges } = await appwriteDatabase.listDocuments(
+          hottakesDatabaseId,
+          Collections["Challenges"],
+          [
+            Query.equal(
+              "discussion",
+              discussions.map((discussion) => discussion.$id)
+            ),
+            Query.equal("challenger", user.userId),
+          ]
+        );
+        console.log({ challenges });
+        let challengeThreadIds = new Map<string, string>();
+        challenges.forEach((challenge) => {
+          if (challenge.accepted)
+            challengeThreadIds.set(challenge.discussion.$id, challenge.$id);
+        });
+        return challengeThreadIds;
+      }
+      return new Map<string, string>();
+    },
+  });
+
   return (
     <div className="mt-10 flex flex-col gap-5 pb-10">
       <SelectSeparator className="bg-btn_secondary" />
       <p className="text-[0.9rem] font-medium text-gray-400">DISCUSSIONS</p>
+      {discussions.length === 0 && (
+        <p className="text-gray-400">No Discussions Yet!</p>
+      )}
       {discussions.map((discussion, i) => (
         <DivWrapper highlight={user.userId === discussion.user} key={i}>
           {user.userId === discussion.user ? (
@@ -143,16 +176,32 @@ export default function ListDiscussions({ id }: { id: string }) {
             <DisplayUser userId={discussion.user} />
           )}
           <p className="text-gray-400">{discussion.description}</p>
-          {user.userId !== discussion.user && (
-            <Button
-              variant="primary"
-              disabled={challengeList.has(discussion.$id)}
-              className="mt-[2rem] w-[8rem]"
-              onClick={() => setDiscussionChallenged(discussion)}
-            >
-              {challengeList.has(discussion.$id) ? "Challenged" : "Challenge"}
-            </Button>
-          )}
+          <div className="mt-[2rem] flex gap-3 ">
+            {user.userId !== discussion.user && (
+              <Button
+                variant="primary"
+                disabled={challengeList.has(discussion.$id)}
+                className="w-[8rem]"
+                onClick={() => setDiscussionChallenged(discussion)}
+              >
+                {challengeList.has(discussion.$id) ? "Challenged" : "Challenge"}
+              </Button>
+            )}
+            {challengeThreadIds?.has(discussion.$id) && (
+              <Button
+                variant="secondary"
+                className="w-[12rem] gap-2"
+                onClick={() => {
+                  router.push(
+                    `/challenges/${challengeThreadIds.get(discussion.$id)}`
+                  );
+                }}
+              >
+                <ExternalLink size="1rem" />
+                Challenge thread
+              </Button>
+            )}
+          </div>
         </DivWrapper>
       ))}
     </div>
