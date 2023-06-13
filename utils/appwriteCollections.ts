@@ -6,4 +6,6 @@ export default {
   "Challenge Discussions": "6485e6ac04f11f50d926",
   Discussion: "64796002f10893282798",
   Participation: "6482be113828d190b924",
+  User: "6471b5f71b04593034f7",
+  "Challenge Votes": "648818bf795d967a2707",
 };
