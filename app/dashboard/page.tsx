@@ -81,13 +81,13 @@ function CommunitiesJoined() {
               </p>
               <Button
                 variant="secondary"
-                className="mt-4 w-[8rem] flex-1 gap-2"
+                className="mt-4 w-[14rem] flex-1 gap-3"
                 onClick={() => {
                   router.push(`community/${community.communities[0].$id}`);
                 }}
               >
                 <ExternalLink size="1rem" />
-                Details
+                Community Page
               </Button>
             </DivWrapper>
           );
