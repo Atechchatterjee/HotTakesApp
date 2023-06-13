@@ -4,47 +4,18 @@ import Navbar from "app/components/Navbar";
 import { Button } from "app/components/ui/button";
 import BodyWrapper from "./components/BodyWrapper";
 import { appwriteAvatars } from "utils/appwriteConfig";
-import Image from "next/image";
 
 import { sora } from "app/fonts";
 import { useEffect } from "react";
-import GradientContainer from "./components/GradientContainer";
-
-function FeatureCard({
-  title,
-  desc,
-  illusSource,
-}: {
-  title: string;
-  desc: string;
-  illusSource: string;
-}) {
-  return (
-    <GradientContainer className="relative rounded-lg bg-secondary p-12">
-      <Image
-        width="200"
-        height="200"
-        src={illusSource}
-        alt="illus-source"
-        className="absolute right-[40%] mt-[-10em] scale-[100%]"
-      />
-      <div className="flex flex-col gap-10 rounded-lg pt-[5em]">
-        <h1
-          className={`${sora.className} justify-center self-center text-3xl font-bold`}
-        >
-          {title}
-        </h1>
-        <p className="text-lg leading-8">{desc}</p>
-      </div>
-    </GradientContainer>
-  );
-}
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   useEffect(() => {
     const result = appwriteAvatars.getInitials();
     console.table(result);
   }, []);
+
+  const router = useRouter();
 
   return (
     <BodyWrapper>
@@ -75,10 +46,19 @@ export default function Home() {
                   alt="explore-icon"
                   className="scale-75"
                 />
-                <span className="self-center">Explore</span>
+                <span
+                  className="self-center"
+                  onClick={() => router.push("/dashboard")}
+                >
+                  Explore
+                </span>
               </div>
             </Button>
-            <Button variant="secondary" size="xl">
+            <Button
+              variant="secondary"
+              size="xl"
+              onClick={() => router.push("/login")}
+            >
               Get Started
             </Button>
           </div>
@@ -87,22 +67,6 @@ export default function Home() {
           src="landing-illus.svg"
           alt="landing-illus"
           className="scale-[120%]"
-        />
-      </div>
-      <div className="mb-20 mt-[22rem] flex flex-row gap-10">
-        <FeatureCard
-          title="Idea behind the App"
-          desc="In the current world of ever changing tech, we have quite a lot of interesting topics that we as developers are constantly discussing about. This app for developers to get their opinions and hot-takes about specific topic out and open in the world. It would allow the community to have discussion / debate on various topics and hopefully have fun and learn something more about the tech."
-          illusSource="idea-illus.svg"
-        />
-        <FeatureCard
-          title="Key Features"
-          desc="
-            HotTakes app has two types of user - The Author and The Normie.
-            The Authors are capable of hosting discussion of various topics among their communities.
-            The Normies are normal users who are part of these communities, who can take part in these discussions and gain credibility points. (gaining credibility point above a set threshold would make them an author). 
-          "
-          illusSource="feature-illus.svg"
         />
       </div>
     </BodyWrapper>
