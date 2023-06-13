@@ -79,7 +79,7 @@ function ListChallenges({
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="mt-5 flex flex-col gap-5">
       {!fetchedUserChallenges && (
         <p className="text-gray-400">
           {challengeStatus === "challenged"
@@ -105,7 +105,9 @@ function ListChallenges({
           </p>
           <div className="flex gap-2 text-gray-400">
             <span className="self-center font-semibold text-white">
-              {challengeStatus === "challenged" ? "Challenged:" : "Challenger:"}
+              {challengeStatus === "challenged"
+                ? "You have challenged:"
+                : "You have been challenged by:"}
             </span>
             <DisplayUser
               userId={
