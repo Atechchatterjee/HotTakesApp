@@ -16,6 +16,7 @@ import clsx from "clsx";
 import { Textarea } from "./ui/textarea";
 import { Query } from "appwrite";
 import { useToast } from "./ui/use-toast";
+import { MdCreate } from "react-icons/md";
 
 type DiscussionType = "normal" | "debate";
 
@@ -110,9 +111,10 @@ export default function NewDiscussionSection({
       <Button
         variant="primary"
         size="lg"
-        className="w-[8rem] gap-2 self-end"
+        className="w-[10rem] gap-3 self-end"
         onClick={createNewDiscussion}
       >
+        <MdCreate />
         Create
       </Button>
     </div>

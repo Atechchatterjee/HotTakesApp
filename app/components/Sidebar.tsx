@@ -15,6 +15,10 @@ import clsx from "clsx";
 import { HTMLAttributes, useEffect, useState } from "react";
 import { SelectSeparator } from "./ui/select";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { MdDashboard } from "react-icons/md";
+import { GiBattleAxe } from "react-icons/gi";
+import { TfiLayoutListThumbAlt } from "react-icons/tfi";
+import { IoIosPeople } from "react-icons/io";
 
 interface SidebarMenuProps extends HTMLAttributes<HTMLDivElement> {
   text: string;
@@ -48,7 +52,7 @@ function SidebarMenuItem({
 type MenuItemType = {
   text: string;
   href: string;
-  icon: LucideIcon;
+  icon: any;
   ref: "dashboard" | "feed" | "challenges" | "community";
 };
 
@@ -56,12 +60,27 @@ const menuItems: MenuItemType[] = [
   {
     text: "Dashboard",
     href: "/dashboard",
-    icon: LayoutDashboard,
+    icon: () => <MdDashboard className="h-[1.5rem] w-[1.5rem]" />,
     ref: "dashboard",
   },
-  { text: "Feed", href: "/feed", icon: LayoutList, ref: "feed" },
-  { text: "Challenges", href: "/challenges", icon: Swords, ref: "challenges" },
-  { text: "Community", href: "/community", icon: Users, ref: "community" },
+  {
+    text: "Feed",
+    href: "/feed",
+    icon: () => <TfiLayoutListThumbAlt className="h-[1.5rem] w-[1.5rem]" />,
+    ref: "feed",
+  },
+  {
+    text: "Challenges",
+    href: "/challenges",
+    icon: () => <GiBattleAxe className="h-[1.5rem] w-[1.5rem]" />,
+    ref: "challenges",
+  },
+  {
+    text: "Community",
+    href: "/community",
+    icon: () => <IoIosPeople className="h-[1.5rem] w-[1.5rem]" />,
+    ref: "community",
+  },
 ];
 
 export default function Sidebar({
@@ -79,7 +98,7 @@ export default function Sidebar({
 
   useEffect(() => {
     setMenuItemSelected({
-      ref: pathName.split("/")[1],
+      ref: pathName?.split("/")[1],
     } as Pick<MenuItemType, "ref">);
     enableAnimations(true);
   }, []);
