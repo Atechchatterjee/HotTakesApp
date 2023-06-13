@@ -93,50 +93,48 @@ export default function ListCommunities({
   return (
     <div className="mt-5 flex flex-col gap-4" ref={parent}>
       <p className="text-sm font-medium text-gray-400">LIST OF COMMUNITIES</p>
-      {communities.map((community, i) => {
-        return (
-          <div
-            className="flex flex-col gap-2 rounded-lg border border-btn_secondary bg-secondary pb-5 pl-7 pr-7 pt-5 transition-all duration-300 hover:brightness-[130%]"
-            key={i}
-          >
-            <h2 className={`${inter.className} text-2xl font-bold`}>
-              {community.name}
-            </h2>
-            <p className="text-[1.1rem] font-medium">
-              {community.authorName}
-              <span className="font-bold text-accent"> @author</span>
-            </p>
-            <p className="text-gray-400">{community.description}</p>
-            <div className="mt-7 flex w-[18rem] gap-3">
-              <Button
-                variant="primary"
-                className={"flex-1 gap-2"}
-                disabled={
-                  joinedCommunitySet.has(community.$id) ||
-                  userId === community.author
-                }
-                onClick={() => {
-                  setCommunityToJoin(community);
-                  joinCommunity();
-                }}
-              >
-                <Users size="0.9rem" />
-                {joinedCommunitySet.has(community.$id) ? "Joined" : "Join"}
-              </Button>
-              <Button
-                variant="secondary"
-                className="flex-1 gap-2"
-                onClick={() => {
-                  router.push(`/community/${community.$id}`);
-                }}
-              >
-                <ExternalLink size="1rem" />
-                Details
-              </Button>
+      {communities.map(
+        (community, i) =>
+          userId !== community.author && (
+            <div
+              className="flex flex-col gap-2 rounded-lg border border-btn_secondary bg-secondary pb-5 pl-7 pr-7 pt-5 transition-all duration-300 hover:brightness-[130%]"
+              key={i}
+            >
+              <h2 className={`${inter.className} text-2xl font-bold`}>
+                {community.name}
+              </h2>
+              <p className="text-[1.1rem] font-medium">
+                {community.authorName}
+                <span className="font-bold text-accent"> @author</span>
+              </p>
+              <p className="text-gray-400">{community.description}</p>
+              <div className="mt-7 flex w-[20rem] gap-3">
+                <Button
+                  variant="primary"
+                  className="flex-1 gap-2"
+                  disabled={joinedCommunitySet.has(community.$id)}
+                  onClick={() => {
+                    setCommunityToJoin(community);
+                    joinCommunity();
+                  }}
+                >
+                  <Users size="0.9rem" />
+                  {joinedCommunitySet.has(community.$id) ? "Joined" : "Join"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="gap-2"
+                  onClick={() => {
+                    router.push(`/community/${community.$id}`);
+                  }}
+                >
+                  <ExternalLink size="1rem" />
+                  Community Page
+                </Button>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          )
+      )}
     </div>
   );
 }
