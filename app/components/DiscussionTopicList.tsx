@@ -12,8 +12,9 @@ import { useJoinedCommunities } from "hooks/useJoinedCommunities";
 
 export default function DiscussionTopicList({
   className,
+  allDiscussions,
   ...props
-}: HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement> & { allDiscussions?: boolean }) {
   const user = useStore((state) => state.user);
   const [discussionTopicList, setDiscussionTopicList] = useState<
     Models.Document[]
@@ -38,10 +39,25 @@ export default function DiscussionTopicList({
   }
 
   useEffect(() => {
-    getDiscussionTopicList().then((documents) => {
-      setDiscussionTopicList(documents);
-      if (refetch) setRefetch(false);
-    });
+    if (!allDiscussions) {
+      getDiscussionTopicList().then((documents) => {
+        setDiscussionTopicList(documents);
+        if (refetch) setRefetch(false);
+      });
+    } else {
+      (async () => {
+        try {
+          const { documents } = await appwriteDatabase.listDocuments(
+            hottakesDatabaseId,
+            Collection["Discussion Topics"]
+          );
+          setDiscussionTopicList(documents);
+          if (refetch) setRefetch(false);
+        } catch (err) {
+          console.error(err);
+        }
+      })();
+    }
   }, [user, refetch]);
 
   return (
