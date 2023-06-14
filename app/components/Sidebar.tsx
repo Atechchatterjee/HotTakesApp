@@ -114,11 +114,11 @@ export default function Sidebar({
       <div className="ml-auto mr-auto flex w-[80%] gap-5 pt-[10%]">
         <UserAvatar
           avatarImgSrc={avatarImgSrc}
-          className="xs:h-[1em] xs:w-[1em] h-[4em] w-[4em] sm:h-[2em] sm:w-[2em] md:h-[3em] md:w-[3em] lg:h-[4em] lg:w-[4em]"
+          className="xs:h-[1em] xs:w-[1em] h-[3em] w-[3em] sm:h-[1em] sm:w-[1em] md:h-[2em] md:w-[2em] lg:h-[3em] lg:w-[3em]"
         />
         <div className="flex flex-col gap-1 self-center">
           <h2
-            className={`${inter.className} xs:text-[90%] font-semibold sm:text-[105%] md:text-[120%] lg:text-[150%]`}
+            className={`${inter.className} xs:text-[90%] text-xl font-semibold`}
           >
             {name}
           </h2>
@@ -127,8 +127,7 @@ export default function Sidebar({
           </p>
         </div>
       </div>
-      <SelectSeparator className="mt-10 bg-btn_secondary" />
-      <div className="mt-10 flex flex-col gap-3" ref={parent}>
+      <div className="mt-16 flex flex-col gap-3" ref={parent}>
         {menuItems.map(({ text, href, icon, ref }, i) => (
           <SidebarMenuItem
             {...{ text, href, icon }}
