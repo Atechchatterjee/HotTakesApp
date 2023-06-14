@@ -17,6 +17,10 @@ import {
 } from "app/components/ui/dropdown-menu";
 import { appwriteAccount } from "utils/appwriteConfig";
 import UserAvatar from "./UserAvatar";
+import { GiBattleAxe } from "react-icons/gi";
+import { IoIosPeople } from "react-icons/io";
+import { TfiLayoutListThumbAlt } from "react-icons/tfi";
+import { MdDashboard } from "react-icons/md";
 
 export function AvatarDropDown({ avatarImgSrc }: { avatarImgSrc: string }) {
   return (
@@ -28,27 +32,25 @@ export function AvatarDropDown({ avatarImgSrc }: { avatarImgSrc: string }) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:bg-slate-800">
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => window.location.assign("/dashboard")}
           >
-            <LayoutDashboardIcon className="mr-2 h-4 w-4" />
+            <MdDashboard className="mr-2 h-4 w-4" />
             <span>Dashboard</span>
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          <DropdownMenuItem onClick={() => window.location.assign("/feed")}>
+            <TfiLayoutListThumbAlt className="mr-2 h-4 w-4" />
+            <span>Login</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Keyboard className="mr-2 h-4 w-4" />
-            <span>Keyboard shortcuts</span>
-            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+          <DropdownMenuItem onClick={() => window.location.assign("/feed")}>
+            <GiBattleAxe className="mr-2 h-4 w-4" />
+            <span>Feed</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => window.location.assign("/challenges")}
+          >
+            <IoIosPeople className="mr-2 h-4 w-4" />
+            <span>Challenges</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -60,7 +62,6 @@ export function AvatarDropDown({ avatarImgSrc }: { avatarImgSrc: string }) {
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
