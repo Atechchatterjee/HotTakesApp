@@ -4,16 +4,9 @@ import UserAvatar from "./UserAvatar";
 import { inter } from "app/fonts";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  LayoutDashboard,
-  LayoutList,
-  LucideIcon,
-  Swords,
-  Users,
-} from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import clsx from "clsx";
 import { HTMLAttributes, useEffect, useState } from "react";
-import { SelectSeparator } from "./ui/select";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { MdDashboard } from "react-icons/md";
 import { GiBattleAxe } from "react-icons/gi";
