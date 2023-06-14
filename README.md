@@ -1,3 +1,20 @@
+# Run Hot Takes App
+
+Run dev server
+
+```bash
+npm install
+npm run dev
+```
+
+Run web-socket-server
+
+```
+cd web-socket-server
+npm install
+npm run dev
+```
+
 # Tech Stack we will be using
 
 The technologies that I have chosen to work with are listed below:
